@@ -1,42 +1,68 @@
 import { Packet, UDPPacket } from 'modloader64_api/ModLoaderDefaultImpls';
-import * as API from 'BanjoTooie/API/Imports';
+import * as DB from './Database';
+import * as PData from '../puppet/Instance';
 
 export class SyncStorage extends Packet {
-	game_flags: Buffer;
-	global_flags: Buffer;
-	jiggy_wiggy_challenge: number;
-	health_upgrade: number;
-	jinjo: Buffer;
-
+	file: DB.FileData[];
 	constructor(
 		lobby: string,
-		game_flags: Buffer,
-		global_flags: Buffer,
-		jiggy_wiggy_challenge: number,
-		health_upgrade: number,
-		jinjo: Buffer
+        file: DB.FileData[]
 	) {
-		super('SyncStorage', 'BtOnline', lobby, false);
-		this.game_flags = game_flags;
-		this.global_flags = global_flags;
-		this.jiggy_wiggy_challenge = jiggy_wiggy_challenge;
-		this.health_upgrade = health_upgrade;
-		this.jinjo = jinjo;
+        super('SyncStorage', 'BtOnline', lobby, false);
+        this.file = file;
 	}
 }
 
 export class SyncBuffered extends Packet {
-	value: Buffer;
-	constructor(lobby: string, header: string, value: Buffer, persist: boolean) {
-		super(header, 'BtOnline', lobby, persist);
-		this.value = value;
-	}
+    team: number;
+    value: Buffer;
+    constructor(
+        lobby: string,
+        header: string,
+        team: number,
+        value: Buffer,
+        persist: boolean
+    ) {
+        super(header, 'BtOnline', lobby, persist);
+        this.team = team;
+        this.value = value;
+    }
 }
 
 export class SyncNumbered extends Packet {
-	value: number;
-	constructor(lobby: string, header: string, value: number, persist: boolean) {
-		super(header, 'BtOnline', lobby, persist);
-		this.value = value;
-	}
+    team: number;
+    value: number;
+    constructor(
+        lobby: string,
+        header: string,
+        team: number,
+        value: number,
+        persist: boolean
+    ) {
+        super(header, 'BtOnline', lobby, persist);
+        this.team = team;
+        this.value = value;
+    }
+}
+
+// #################################################
+// ##  Puppet Tracking
+// #################################################
+
+export class SyncPuppet extends UDPPacket {
+    puppet: PData.Data;
+    constructor(lobby: string, value: PData.Data) {
+        super('SyncPuppet', 'BtOnline', lobby, false);
+        this.puppet = value;
+    }
+}
+
+export class SyncLocation extends Packet {
+    team: number;
+    scene: number;
+    constructor(lobby: string, team: number, scene: number) {
+        super('SyncLocation', 'BtOnline', lobby, true);
+        this.team = team;
+        this.scene = scene;
+    }
 }
