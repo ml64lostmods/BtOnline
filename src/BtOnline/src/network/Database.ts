@@ -1,11 +1,8 @@
 export class FileData {
 	flagsGame: Buffer = Buffer.alloc(0xb0);
 	flagsGlobal: Buffer = Buffer.alloc(0x10);
-	flagsJinjos: Buffer = Buffer.alloc(0x2d);
 	curJiggyChallenge: number = 0;
 	healthUpgrade: number = 0;
-	jinjoRandomizer: number = 0;
-	jinjosSet: boolean = false;
 }
 
 export class Database {

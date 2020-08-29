@@ -118,19 +118,6 @@ export class BtOnline_Client {
         this.log('Updated Team[' + API.ProfileType[packet.team] + ']: {Health Upgrades}');
     }
 
-    @NetworkHandler('SyncJinjoFlags')
-    onClient_SyncJinjoFlags(packet: Net.SyncBuffered) {
-        this.log('Received: {Jinjo Flags}');
-
-        // Mark jinjos as set for the rest of the game
-        this.parent.cDB.file[packet.team].jinjosSet = true;
-
-        // Detect Changes
-        if (!this.handlers.merge_bits(this.parent.cDB.file[packet.team].flagsJinjos, packet.value)) return;
-
-        this.log('Updated Team[' + API.ProfileType[packet.team] + ']: {Jinjo Flags}');
-    }
-
     // Puppet Tracking
 
     @NetworkHandler('Request_Scene')
