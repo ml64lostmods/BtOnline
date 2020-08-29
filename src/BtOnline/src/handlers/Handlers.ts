@@ -82,7 +82,7 @@ export class BtOnline_Handlers {
             this.handle_stop_n_swap_egg_count(bufData);
             this.handle_ticket_count(bufData);
         }
-        // this.handle_global_flags(bufData!, bufStorage!);
+        this.handle_global_flags(bufData!, bufStorage!);
     }
 
     // #################################################
@@ -161,6 +161,26 @@ export class BtOnline_Handlers {
                 buf[byteOff] ^= 1 << bitOff;
             }
         }
+    }
+
+    selective_game_sync(buf1: Buffer, buf2: Buffer, offset: number, mask: number): boolean {
+        this.core.save.flags_game.set(offset, buf1[offset] | buf2[offset]);
+        buf1[offset] &= mask;
+
+        if (buf1[offset] === buf2[offset]) return false;
+
+        buf1[offset] |= buf2[offset];
+        return true;
+    }
+
+    selective_global_sync(buf1: Buffer, buf2: Buffer, offset: number, mask: number): boolean {
+        this.core.save.flags_global.set(offset, buf1[offset] | buf2[offset]);
+        buf1[offset] &= mask;
+
+        if (buf1[offset] === buf2[offset]) return false;
+
+        buf1[offset] |= buf2[offset];
+        return true;
     }
 
     handle_puppets(scene: number, forceReload: boolean) {
@@ -287,127 +307,49 @@ export class BtOnline_Handlers {
         }
 
         // Mumbo Magic on Chuffy (desynced until dynamic sync)
-        i = 13; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xdf;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 13, 0xdf);
 
         // Klungo 3 Potion chosen
-        i = 17; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x7f;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 17, 0x7f);
 
         // Klungo 1 Potion chosen
-        i = 19; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xf5;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 19, 0xf5);
 
         // HFP Lava Switch & JRL Swimming Pool
-        i = 39; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x7f;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 39, 0x7f);
 
         // TDL Wigwam Big/Small & Scrat Heal (Scrotty Family Quest)
-        i = 44; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xf9;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 44, 0xf9);
 
         // Klungo 2 Potion chosen & GI: Quality Control Room
-        i = 50; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xdb;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 50, 0xdb);
 
         // Sabreman Rescue
-        i = 52; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xfb;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 52, 0xfb);
 
         // JRL Sea Bottom (Crash Fix)
-        i = 66; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xf7;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 66, 0xf7);
 
         // MT Snake Jiggy
-        i = 80; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xef;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 80, 0xef);
 
         // JRL Atlantis (Crash Fix)
-        i = 81; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xfb;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage,81, 0xfb);
 
         // In-map CCL Mountain Exterior (precautionsary desync)
-        i = 84; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x7f;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 84, 0x7f);
 
         // JRL Smugglers Cavern (Crash Fix)
-        i = 89; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xdf;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 89, 0xdf);
 
         // Klungo 1-3 Defeated
-        i = 94; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xf8;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 94, 0xf8);
 
         // Jiggywiggy Challenge
         count = bufData[102] >> 4;
         if (this.parent.cDB.file[team].curJiggyChallenge > count) {
-            bufData[102] = (bufData[102] & 0x0f) | 
-            (this.parent.cDB.file[team].curJiggyChallenge << 4);
+            bufData[102] = (bufData[102] & 0x0f) |
+                (this.parent.cDB.file[team].curJiggyChallenge << 4);
             this.core.save.flags_game.set(102, bufData[102]);
         } else if (this.parent.cDB.file[team].curJiggyChallenge < count) {
             this.parent.cDB.file[team].curJiggyChallenge = count;
@@ -424,49 +366,19 @@ export class BtOnline_Handlers {
         }
 
         // Jiggywiggy Challenge Byte (without index)
-        i = 102; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x0f;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 102, 0x0f);
 
         // Honey B Health Upgrades & Train (1)
-        i = 152; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x03;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 142, 0x03);
 
         // Train (2)
-        i = 153; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xf0;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 153, 0xf0);
 
         // Bottles Energy Restored
-        i = 170; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xfe;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 170, 0xfe);
 
         // Scrut Rescue (Scrotty Family Quest)
-        i = 172; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xfe;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_game_sync(bufData, bufStorage, 172, 0xfe);
 
         // Process Changes
         if (!needUpdate) return false;
@@ -596,22 +508,10 @@ export class BtOnline_Handlers {
         }
 
         // Filter unknowns inside boss replay
-        i = 3; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x1f;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_global_sync(bufData, bufStorage, 3, 0x1f);
 
         // Filter unknowns inside minigame replay
-        i = 5; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0xf8;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_global_sync(bufData, bufStorage, 5, 0xf8);
 
         // Raw sync (no loop)
         if (bufData[6] !== bufStorage[6]) {
@@ -635,13 +535,7 @@ export class BtOnline_Handlers {
         }
 
         // Sync Jinjo in Multiplayer (bit)
-        i = 10; val = bufData[i] | bufStorage[i];
-        this.core.save.flags_game.set(i, val);
-        bufData[i] &= 0x08;
-        if (bufData[i] !== bufStorage[i]) {
-            bufData[i] |= bufStorage[i];
-            needUpdate = true;
-        }
+        this.selective_global_sync(bufData, bufStorage, 10, 0x08);
 
         // Process Changes
         if (!needUpdate) return;
