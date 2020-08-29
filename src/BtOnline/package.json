@@ -1,10 +1,10 @@
 {
   "name": "BtOnline",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "main": "BtOnline.js",
   "author": "PMONickpop123, SpiceyWolf",
-  "credits": "Mittenz",
+  "credits": "Mittenz, TheLensta",
   "license": "GPL3",
   "core": "BanjoTooie",
   "updateUrl": "https://raw.githubusercontent.com/Modloader-Lost-Mods/BtOnline/master/update.json",

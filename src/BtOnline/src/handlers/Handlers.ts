@@ -296,18 +296,37 @@ export class BtOnline_Handlers {
 
         for (i = 0; i < count; i++) {
             if (bufData[i] === bufStorage[i]) continue;
-            if (i === 17 || // Klungo 3 Potion chosen
-                i === 19 || // Klungo 1 Potion chosen
-                i === 50 || // Klungo 2 Potion chosen
+            if (i === 13 || // Mumbo Magic on Chuffy (desynced until dynamic sync)
+                i === 17 || // Klungo 3 Potion chosen
+                i === 19 || // Klungo 1 Potion chosen & Maggies Jiggy
+                i === 39 || // HFP Lava Switch & JRL Swimming Pool
+                i === 44 || // TDL Wigwam Big/Small & Scrat Heal (Scrotty Family Quest)
+                i === 50 || // Klungo 2 Potion chosen & GI: Quality Control Room
+                i === 52 || // Sabreman Rescue
+                i === 66 || // JRL Sea Bottom (Crash Fix)
                 i === 80 || // MT Snake Jiggy
+                i === 81 || // JRL Atlantis (Crash Fix)
+                i === 84 || // In-map CCL Mountain Exterior (precautionsary desync)
+                i === 89 || // JRL Smugglers Cavern (Crash Fix)
                 i === 94 || // Klungo 1-3 defeated
                 i === 102 || // Jiggywiggy's Challenge
-                i === 152 || // Honey B Health Upgrades
-                i === 170) // Bottles Energy Restored
+                i === 152 || // Honey B Health Upgrades & Train (1)
+                i === 153 || // Train (2)
+                i === 170 || // Bottles Energy Restored
+                i === 172) // Scrut Rescue (Scrotty Family Quest)
                 continue; // Escape -> We want to manual sync these
 
             bufData[i] |= bufStorage[i];
             this.core.save.flags_game.set(i, bufData[i]);
+            needUpdate = true;
+        }
+
+        // Mumbo Magic on Chuffy (desynced until dynamic sync)
+        val = bufData[13] & 0xdf;
+        if (val !== bufStorage[13]) {
+            val |= bufStorage[13];
+            this.core.save.flags_game.set(13, val | bufData[13]);
+            bufData[13] = val;
             needUpdate = true;
         }
 
@@ -321,7 +340,7 @@ export class BtOnline_Handlers {
         }
 
         // Klungo 1 Potion chosen
-        val = bufData[19] & 0xfd;
+        val = bufData[19] & 0xf5;
         if (val !== bufStorage[19]) {
             val |= bufStorage[19];
             this.core.save.flags_game.set(19, val | bufData[19]);
@@ -329,12 +348,48 @@ export class BtOnline_Handlers {
             needUpdate = true;
         }
 
-        // Klungo 2 Potion chosen
-        val = bufData[50] & 0xfb;
+        // HFP Lava Switch & JRL Swimming Pool
+        val = bufData[39] & 0x7f;
+        if (val !== bufStorage[39]) {
+            val |= bufStorage[39];
+            this.core.save.flags_game.set(39, val | bufData[39]);
+            bufData[39] = val;
+            needUpdate = true;
+        }
+
+        // TDL Wigwam Big/Small & Scrat Heal (Scrotty Family Quest)
+        val = bufData[44] & 0xf9;
+        if (val !== bufStorage[44]) {
+            val |= bufStorage[44];
+            this.core.save.flags_game.set(44, val | bufData[44]);
+            bufData[44] = val;
+            needUpdate = true;
+        }
+
+        // Klungo 2 Potion chosen & GI: Quality Control Room
+        val = bufData[50] & 0xdb;
         if (val !== bufStorage[50]) {
             val |= bufStorage[50];
             this.core.save.flags_game.set(50, val | bufData[50]);
             bufData[50] = val;
+            needUpdate = true;
+        }
+
+        // Sabreman Rescue
+        val = bufData[52] & 0xfb;
+        if (val !== bufStorage[52]) {
+            val |= bufStorage[52];
+            this.core.save.flags_game.set(52, val | bufData[52]);
+            bufData[52] = val;
+            needUpdate = true;
+        }
+
+        // JRL Sea Bottom (Crash Fix)
+        val = bufData[66] & 0xf7;
+        if (val !== bufStorage[66]) {
+            val |= bufStorage[66];
+            this.core.save.flags_game.set(66, val | bufData[66]);
+            bufData[66] = val;
             needUpdate = true;
         }
 
@@ -344,6 +399,33 @@ export class BtOnline_Handlers {
             val |= bufStorage[80];
             this.core.save.flags_game.set(80, val | bufData[80]);
             bufData[80] = val;
+            needUpdate = true;
+        }
+
+        // JRL Atlantis (Crash Fix)
+        val = bufData[81] & 0xfb;
+        if (val !== bufStorage[81]) {
+            val |= bufStorage[81];
+            this.core.save.flags_game.set(81, val | bufData[81]);
+            bufData[81] = val;
+            needUpdate = true;
+        }
+
+        // In-map CCL Mountain Exterior (precautionsary desync)
+        val = bufData[84] & 0x7f;
+        if (val !== bufStorage[84]) {
+            val |= bufStorage[84];
+            this.core.save.flags_game.set(84, val | bufData[84]);
+            bufData[84] = val;
+            needUpdate = true;
+        }
+
+        // JRL Smugglers Cavern (Crash Fix)
+        val = bufData[89] & 0xdf;
+        if (val !== bufStorage[89]) {
+            val |= bufStorage[89];
+            this.core.save.flags_game.set(89, val | bufData[89]);
+            bufData[89] = val;
             needUpdate = true;
         }
 
@@ -383,12 +465,21 @@ export class BtOnline_Handlers {
             needUpdate = true;
         }
 
-        // Honey-B Health Upgrades
-        val = bufData[152] & 0xe3;
+        // Honey B Health Upgrades & Train (1)
+        val = bufData[152] & 0x03;
         if (val !== bufStorage[152]) {
             val |= bufStorage[152];
             this.core.save.flags_game.set(152, val | bufData[152]);
             bufData[152] = val;
+            needUpdate = true;
+        }
+
+        // Train (2)
+        val = bufData[153] & 0xf0;
+        if (val !== bufStorage[153]) {
+            val |= bufStorage[153];
+            this.core.save.flags_game.set(153, val | bufData[153]);
+            bufData[153] = val;
             needUpdate = true;
         }
 
@@ -398,6 +489,15 @@ export class BtOnline_Handlers {
             val |= bufStorage[170];
             this.core.save.flags_game.set(170, val | bufData[170]);
             bufData[170] = val;
+            needUpdate = true;
+        }
+
+        // Scrut Rescue (Scrotty Family Quest)
+        val = bufData[172] & 0xfe;
+        if (val !== bufStorage[172]) {
+            val |= bufStorage[172];
+            this.core.save.flags_game.set(172, val | bufData[172]);
+            bufData[172] = val;
             needUpdate = true;
         }
 
@@ -620,21 +720,58 @@ export class BtOnline_Handlers {
             needUpdate = true;
         }
 
-        // ???
-        val = bufData[12] & 0xbf;
-        if (val !== bufStorage[12]) {
-            val |= bufStorage[12];
-            this.core.save.flags_game.set(12, val | bufData[12]);
-            bufData[12] = val;
+        // Raw sync (no loop)
+        if (bufData[2] !== bufStorage[2]) {
+            bufData[2] |= bufStorage[2];
+            this.core.save.flags_global.set(2, bufData[2]);
             needUpdate = true;
         }
 
-        // ???        
-        val = bufData[13] & 0xef;
-        if (val !== bufStorage[13]) {
-            val |= bufStorage[13];
-            this.core.save.flags_game.set(13, val | bufData[13]);
-            bufData[13] = val;
+        // Filter unknowns inside boss replay
+        val = bufData[3] & 0x1f;
+        if (val !== bufStorage[3]) {
+            val |= bufStorage[3];
+            this.core.save.flags_game.set(3, val | bufData[3]);
+            bufData[3] = val;
+            needUpdate = true;
+        }
+
+        // Filter unknowns inside minigame replay
+        val = bufData[5] & 0xf8;
+        if (val !== bufStorage[5]) {
+            val |= bufStorage[5];
+            this.core.save.flags_game.set(5, val | bufData[5]);
+            bufData[5] = val;
+            needUpdate = true;
+        }
+        
+        // Raw sync (no loop)
+        if (bufData[6] !== bufStorage[6]) {
+            bufData[6] |= bufStorage[6];
+            this.core.save.flags_global.set(6, bufData[6]);
+            needUpdate = true;
+        }
+
+        // Raw sync (no loop)
+        if (bufData[7] !== bufStorage[7]) {
+            bufData[7] |= bufStorage[7];
+            this.core.save.flags_global.set(7, bufData[7]);
+            needUpdate = true;
+        }
+
+        // Raw sync (no loop)
+        if (bufData[8] !== bufStorage[8]) {
+            bufData[8] |= bufStorage[8];
+            this.core.save.flags_global.set(8, bufData[8]);
+            needUpdate = true;
+        }
+
+        // Sync Jinjo in Multiplayer (bit)
+        val = bufData[10] & 0x08;
+        if (val !== bufStorage[10]) {
+            val |= bufStorage[10];
+            this.core.save.flags_game.set(10, val | bufData[10]);
+            bufData[10] = val;
             needUpdate = true;
         }
 
