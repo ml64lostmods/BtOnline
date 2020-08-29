@@ -307,43 +307,43 @@ export class BtOnline_Handlers {
         }
 
         // Mumbo Magic on Chuffy (desynced until dynamic sync)
-        this.selective_game_sync(bufData, bufStorage, 13, 0xdf);
+        if (this.selective_game_sync(bufData, bufStorage, 13, 0xdf)) needUpdate = true;
 
         // Klungo 3 Potion chosen
-        this.selective_game_sync(bufData, bufStorage, 17, 0x7f);
+        if (this.selective_game_sync(bufData, bufStorage, 17, 0x7f)) needUpdate = true;
 
         // Klungo 1 Potion chosen
-        this.selective_game_sync(bufData, bufStorage, 19, 0xf5);
+        if (this.selective_game_sync(bufData, bufStorage, 19, 0xf5)) needUpdate = true;
 
         // HFP Lava Switch & JRL Swimming Pool
-        this.selective_game_sync(bufData, bufStorage, 39, 0x7f);
+        if (this.selective_game_sync(bufData, bufStorage, 39, 0x7f)) needUpdate = true;
 
         // TDL Wigwam Big/Small & Scrat Heal (Scrotty Family Quest)
-        this.selective_game_sync(bufData, bufStorage, 44, 0xf9);
+        if (this.selective_game_sync(bufData, bufStorage, 44, 0xf9)) needUpdate = true;
 
         // Klungo 2 Potion chosen & GI: Quality Control Room
-        this.selective_game_sync(bufData, bufStorage, 50, 0xdb);
+        if (this.selective_game_sync(bufData, bufStorage, 50, 0xdb)) needUpdate = true;
 
         // Sabreman Rescue
-        this.selective_game_sync(bufData, bufStorage, 52, 0xfb);
+        if (this.selective_game_sync(bufData, bufStorage, 52, 0xfb)) needUpdate = true;
 
         // JRL Sea Bottom (Crash Fix)
-        this.selective_game_sync(bufData, bufStorage, 66, 0xf7);
+        if (this.selective_game_sync(bufData, bufStorage, 66, 0xf7)) needUpdate = true;
 
         // MT Snake Jiggy
-        this.selective_game_sync(bufData, bufStorage, 80, 0xef);
+        if (this.selective_game_sync(bufData, bufStorage, 80, 0xef)) needUpdate = true;
 
         // JRL Atlantis (Crash Fix)
-        this.selective_game_sync(bufData, bufStorage,81, 0xfb);
+        if (this.selective_game_sync(bufData, bufStorage,81, 0xfb)) needUpdate = true;
 
         // In-map CCL Mountain Exterior (precautionsary desync)
-        this.selective_game_sync(bufData, bufStorage, 84, 0x7f);
+        if (this.selective_game_sync(bufData, bufStorage, 84, 0x7f)) needUpdate = true;
 
         // JRL Smugglers Cavern (Crash Fix)
-        this.selective_game_sync(bufData, bufStorage, 89, 0xdf);
+        if (this.selective_game_sync(bufData, bufStorage, 89, 0xdf)) needUpdate = true;
 
         // Klungo 1-3 Defeated
-        this.selective_game_sync(bufData, bufStorage, 94, 0xf8);
+        if (this.selective_game_sync(bufData, bufStorage, 94, 0xf8)) needUpdate = true;
 
         // Jiggywiggy Challenge
         count = bufData[102] >> 4;
@@ -362,23 +362,22 @@ export class BtOnline_Handlers {
                     false
                 )
             );
-            console.log(102);
         }
 
         // Jiggywiggy Challenge Byte (without index)
-        this.selective_game_sync(bufData, bufStorage, 102, 0x0f);
+        if (this.selective_game_sync(bufData, bufStorage, 102, 0x0f)) needUpdate = true;
 
         // Honey B Health Upgrades & Train (1)
-        this.selective_game_sync(bufData, bufStorage, 142, 0x03);
+        if (this.selective_game_sync(bufData, bufStorage, 142, 0x03)) needUpdate = true;
 
         // Train (2)
-        this.selective_game_sync(bufData, bufStorage, 153, 0xf0);
+        if (this.selective_game_sync(bufData, bufStorage, 153, 0xf0)) needUpdate = true;
 
         // Bottles Energy Restored
-        this.selective_game_sync(bufData, bufStorage, 170, 0xfe);
+        if (this.selective_game_sync(bufData, bufStorage, 170, 0xfe)) needUpdate = true;
 
         // Scrut Rescue (Scrotty Family Quest)
-        this.selective_game_sync(bufData, bufStorage, 172, 0xfe);
+        if (this.selective_game_sync(bufData, bufStorage, 172, 0xfe)) needUpdate = true;
 
         // Process Changes
         if (!needUpdate) return false;
@@ -508,10 +507,10 @@ export class BtOnline_Handlers {
         }
 
         // Filter unknowns inside boss replay
-        this.selective_global_sync(bufData, bufStorage, 3, 0x1f);
+        if (this.selective_global_sync(bufData, bufStorage, 3, 0x1f)) needUpdate = true;
 
         // Filter unknowns inside minigame replay
-        this.selective_global_sync(bufData, bufStorage, 5, 0xf8);
+        if (this.selective_global_sync(bufData, bufStorage, 5, 0xf8)) needUpdate = true;
 
         // Raw sync (no loop)
         if (bufData[6] !== bufStorage[6]) {
@@ -535,7 +534,7 @@ export class BtOnline_Handlers {
         }
 
         // Sync Jinjo in Multiplayer (bit)
-        this.selective_global_sync(bufData, bufStorage, 10, 0x08);
+        if (this.selective_global_sync(bufData, bufStorage, 10, 0x08)) needUpdate = true;
 
         // Process Changes
         if (!needUpdate) return;
