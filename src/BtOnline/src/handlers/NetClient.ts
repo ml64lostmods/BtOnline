@@ -143,6 +143,7 @@ export class BtOnline_Client {
 
     @NetworkHandler('SyncPuppet')
     onClient_SyncPuppet(packet: Net.SyncPuppet) {
+        if (packet.lobby !== 'nfu_ea') return;
         this.parent.pMgr.handlePuppet(packet);
     }
 }

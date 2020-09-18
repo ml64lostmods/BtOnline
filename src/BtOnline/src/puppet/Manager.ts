@@ -33,31 +33,34 @@ export class PuppetManager {
         this.core = core;
         this.mapi = mapi;
         this.commandBuffer = this.core.commandBuffer;
-        let addr = global.ModLoader[API.AddressType.PUPPET] + 0x04;
-        let offset: number;
+
+        let vis = global.ModLoader[API.AddressType.PUPPET_INFO] + 0x04;
+        let vis_size = global.ModLoader[API.AddressType.PINFO_SIZE];
+        this.me = new Puppet(
+            this.emu,
+            this.commandBuffer,
+            nplayer,
+            core,
+            core.player,
+            0x0, vis, -1
+        );
+
+        let addr = global.ModLoader[API.AddressType.CMD_BUFFER] + 0x04;
         for (let i = 0; i < 16; i++) {
-            offset = addr + i * 0x08 + 0x04;
             this.puppetArray.push(
                 new Puppet(
                     emu,
                     this.commandBuffer,
                     dummy,
+                    this.core,
                     this.core.player,
-                    offset,
+                    addr + i * 0x08 + 0x04,
+                    vis + (i + 1) * vis_size,
                     i
                 )
             );
             this.emptyPuppetSlot.push(i);
         }
-
-        this.me = new Puppet(
-            this.emu,
-            this.commandBuffer,
-            nplayer,
-            core.player,
-            addr + 15 * 0x08 + 0x04,
-            -1
-        )
     }
 
     reset() {

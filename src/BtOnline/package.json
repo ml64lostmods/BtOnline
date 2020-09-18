@@ -1,9 +1,9 @@
 {
   "name": "BtOnline",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "",
   "main": "BtOnline.js",
-  "author": "PMONickpop123, SpiceyWolf",
+  "author": "PMONickpop123, SpiceyWolf, Wedarobi",
   "credits": "Mittenz, TheLensta",
   "license": "GPL3",
   "core": "BanjoTooie",

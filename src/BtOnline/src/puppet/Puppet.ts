@@ -10,7 +10,7 @@ export class Puppet extends API.BaseObj {
     id: string;
     scene: number;
     index: number;
-    pointer: number;
+    ptr_cmd: number;
     canHandle = false;
     isSpawned = false;
 
@@ -22,18 +22,20 @@ export class Puppet extends API.BaseObj {
         emu: IMemory,
         commandBuffer: API.ICommandBuffer,
         nplayer: INetworkPlayer,
+        core: API.IBTCore,
         player: API.IPlayer,
-        pointer: number,
+        ptr_cmd: number,
+        ptr_vis: number,
         index: number
     ) {
         super(emu);
-        this.data = new PData.Data(emu, pointer, player);
+        this.data = new PData.Data(emu, ptr_cmd, ptr_vis, core, player);
         this.commandBuffer = commandBuffer;
         this.nplayer = nplayer;
         this.id = nplayer.uuid;
         this.scene = -1;
         this.index = index;
-        this.pointer = pointer;
+        this.ptr_cmd = ptr_cmd;
     }
 
     handleInstance(data: PData.Data) {
@@ -49,7 +51,7 @@ export class Puppet extends API.BaseObj {
     }
 
     spawn() {
-        let ptr = this.emulator.dereferencePointer(this.pointer);
+        let ptr = this.emulator.dereferencePointer(this.ptr_cmd);
         this.isSpawned = (ptr !== 0x000000);
         this.canHandle = false;
 
@@ -67,17 +69,15 @@ export class Puppet extends API.BaseObj {
                     return;
                 }
 
-                this.emulator.rdramWrite32(ptr + 0x1c, 0xdeadbeef);
                 this.isSpawned = true;
                 this.canHandle = true;
-                
                 //this.log('Puppet spawned! ' + ptr.toString(16).toUpperCase());
             }
         );
     }
 
     despawn() {
-        let ptr = this.emulator.dereferencePointer(this.pointer);
+        let ptr = this.emulator.dereferencePointer(this.ptr_cmd);
         this.isSpawned = (ptr !== 0x000000);
         this.canHandle = false;
 
