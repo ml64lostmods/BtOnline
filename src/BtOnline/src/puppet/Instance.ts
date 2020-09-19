@@ -113,11 +113,11 @@ export class Data extends API.BaseObj implements Data {
         let id: number = val.readUInt32BE(4);
         let um: number = val.readUInt16BE(8);
 
-        this.emulator.memoryDebugLogger(true);
+        //this.emulator.memoryDebugLogger(true);
         this.emulator.rdramWrite32(animArr + 0x00, frame);
         this.emulator.rdramWrite32(animArr + 0x2c, id);
         this.emulator.rdramWrite16(animArr + 0x34, um);
-        this.emulator.memoryDebugLogger(false);
+        //this.emulator.memoryDebugLogger(false);
     }
 
     get pos(): Buffer {

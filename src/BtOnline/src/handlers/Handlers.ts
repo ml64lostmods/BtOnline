@@ -421,7 +421,7 @@ export class BtOnline_Handlers {
         if (!needUpdate) return false;
 
         // Notif the assembly that we made changes
-        this.modloader.emulator.rdramWrite8(global.ModLoader[API.AddressType.CMD_BUFFER], 1) ;
+        this.modloader.emulator.rdramWrite8(global.ModLoader[API.AddressType.CMD_BUFFER]+1, 1) ;
 
         // Send Changes to Server
         this.parent.cDB.file[team].flagsGame = bufData;
