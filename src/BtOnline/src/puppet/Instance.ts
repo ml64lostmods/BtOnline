@@ -14,6 +14,9 @@ export class Data extends API.BaseObj implements Data {
     busyPtr: number;
     broken: boolean = false;
 
+    tptr: number = 0;
+    safe: boolean = false;
+
     constructor(emu: IMemory, ptr_cmd: number, ptr_vis: number,
                 core: API.IBTCore, player: API.IPlayer) {
         super(emu);
@@ -23,12 +26,14 @@ export class Data extends API.BaseObj implements Data {
         this.busyPtr = global.ModLoader[API.AddressType.CMD_BUFFER];
         this.core = core;
         this.player = player;
+        this.copyFields.push('start');
         this.copyFields.push('anim');
         this.copyFields.push('pos');
         this.copyFields.push('rot');
         this.copyFields.push('model');
         this.copyFields.push('visible');
         this.copyFields.push('y_flip');
+        this.copyFields.push('end');
 
         this.myVisiblePtr = global.ModLoader[API.AddressType.PUPPET_INFO] + 0x04;
         this.visibleSize = global.ModLoader[API.AddressType.PINFO_SIZE];
@@ -46,7 +51,7 @@ export class Data extends API.BaseObj implements Data {
             return ret;
         }
 
-        if (this.emulator.rdramRead32(ptr + 0x6e) !== 0x9F6A) {
+        if (this.emulator.rdramRead16(ptr + 0x6e) !== 0x9F6A) {
             this.broken = true;
             return ret;
         }
@@ -54,8 +59,41 @@ export class Data extends API.BaseObj implements Data {
         return ptr;
     }
 
-	subInstance(index: number): number {
+    get start(): number {
 		let ptr: number = this.safetyCheck();
+		if (ptr === 0x000000) {
+            this.tptr = 0;
+            this.safe = false;
+        } else {
+            this.tptr = ptr;
+            this.safe = true;
+        }
+
+        return 0;
+    }
+    set start(val: number) {
+		let ptr: number = this.safetyCheck();
+		if (ptr === 0x000000) {
+            this.tptr = 0;
+            this.safe = false;
+        } else {
+            this.tptr = ptr;
+            this.safe = true;
+        }
+    }
+
+    get end(): number {
+        this.tptr = 0;
+        this.safe = false;
+        return 0;
+    }
+    set end(val: number) {
+        this.tptr = 0;
+        this.safe = false;
+    }
+
+	subInstance(index: number): number {
+		let ptr: number = this.tptr;
 		if (ptr === 0x000000) return 0x000000;
 		return this.emulator.dereferencePointer(ptr + index);
 	}
@@ -64,10 +102,8 @@ export class Data extends API.BaseObj implements Data {
         return this.player.animation;
     }
     set anim(val: Buffer) {
-        let ptr: number = this.safetyCheck();
-        if (ptr === 0x000000) return;
-
-        let animIndex = this.emulator.rdramRead16(ptr + 0x8c);
+        if (!this.safe) return;
+        let animIndex = this.emulator.rdramRead16(this.tptr + 0x8c);
         if (animIndex === 0) return;
 
         let animArr = this.emulator.dereferencePointer(this.animPtr);
@@ -88,26 +124,23 @@ export class Data extends API.BaseObj implements Data {
         return this.player.position;
     }
     set pos(val: Buffer) {
-        let ptr: number = this.safetyCheck();
-        if (ptr === 0x000000) return;
-
-        this.emulator.rdramWriteBuffer(ptr + 0x4, val);
+        if (!this.safe) return;
+        this.emulator.rdramWriteBuffer(this.tptr + 0x4, val);
     }
 
     get rot(): Buffer {
         return this.player.rotation;
     }
-    set rot(val: Buffer) {
-        let ptr: number = this.safetyCheck();
-        if (ptr === 0x000000) return;
-        
-        this.emulator.rdramWriteBuffer(ptr + 0x44, val);
+    set rot(val: Buffer) {   
+        if (!this.safe) return;     
+        this.emulator.rdramWriteBuffer(this.tptr + 0x44, val);
     }
 
     get model(): number {
         return this.player.model_index;
     }
     set model(val: number) {
+        if (!this.safe) return;
         let ptr: number = this.subInstance(0x00);
 		if (ptr === 0) return;
 
@@ -119,6 +152,7 @@ export class Data extends API.BaseObj implements Data {
         return this.emulator.rdramReadBuffer(this.myVisiblePtr, this.visibleSize);
     }
     set visible(val: Buffer) {
+        if (!this.safe) return;
         this.emulator.rdramWriteBuffer(this.ptr_vis, val);
     }
 
@@ -126,6 +160,7 @@ export class Data extends API.BaseObj implements Data {
         return this.player.flip_facing;
     }
     set y_flip(val: boolean) {
+        if (!this.safe) return;
         if (!val) return;
         
         let ptr: number = this.safetyCheck();

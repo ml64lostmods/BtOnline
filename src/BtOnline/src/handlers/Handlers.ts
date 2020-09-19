@@ -4,6 +4,7 @@ import { DiscordStatus } from 'modloader64_api/Discord';
 import * as Main from '../Main';
 import * as API from 'BanjoTooie/API/Imports';
 import * as Net from '../network/Imports';
+import { count } from 'console';
 
 export class BtOnline_Handlers {
     private parent!: Main.BtOnline;
@@ -93,6 +94,43 @@ export class BtOnline_Handlers {
         if (this.parent.config.print_net_server)
             this.modloader.logger.info('[Tick] ' + input);
     }
+
+    utilBitCountBuffer(arr: Buffer, offset: number, length: number)
+    {
+
+        if (length <= 0 || offset + length > arr.byteLength)
+            length = arr.byteLength;
+
+        let count: number = 0;
+        for (let i = offset; i < length; i++) 
+            for (let n = 0; n < 8; n++) 
+                if (arr[i] & (1 << n)) count++; 
+        return count;
+    }
+
+    utilBitCount32(value: number)
+    {
+        let count: number = 0;
+        for (let i = 0; i < 32; i++) 
+            if (value & (1 << i)) count++;
+        return count;
+    } 
+
+    utilBitCount16(value: number)
+    {
+        let count: number = 0;
+        for (let i = 0; i < 16; i++) 
+            if (value & (1 << i)) count++;
+            return count;
+    } 
+
+    utilBitCount8(value: number)
+    {
+        let count: number = 0;
+        for (let i = 0; i < 8; i++) 
+            if (value & (1 << i)) count++;
+            return count;
+    } 
 
     // #################################################
     // ##  API Events
@@ -382,6 +420,9 @@ export class BtOnline_Handlers {
         // Process Changes
         if (!needUpdate) return false;
 
+        // Notif the assembly that we made changes
+        this.modloader.emulator.rdramWrite8(global.ModLoader[API.AddressType.CMD_BUFFER], 1) ;
+
         // Send Changes to Server
         this.parent.cDB.file[team].flagsGame = bufData;
         pData = new Net.SyncBuffered(this.modloader.clientLobby, 'SyncGameFlags', team, bufData, false);
@@ -408,8 +449,8 @@ export class BtOnline_Handlers {
         bufTotal[0] &= 0xf8; // only keeps binary 1111 1000
         bufTotal[3] &= 0x0f; // only keeps binary 0000 1111
 
-        let countSpent = this.modloader.utils.utilBitCountBuffer(bufSpent, 0, 2) * 5;
-        let countTotal = this.modloader.utils.utilBitCountBuffer(bufTotal, 0, 4);
+        let countSpent = this.utilBitCountBuffer(bufSpent, 0, 2) * 5;
+        let countTotal = this.utilBitCountBuffer(bufTotal, 0, 4);
         this.core.save.inventory.cheato_pages = countTotal - countSpent;
     }
 
@@ -419,7 +460,7 @@ export class BtOnline_Handlers {
         bufTotal[4] &= 0x7f; // only keeps binary 0111 1111
 
         let countSpent = 0;
-        let countTotal = this.modloader.utils.utilBitCountBuffer(bufTotal, 0, 5);
+        let countTotal = this.utilBitCountBuffer(bufTotal, 0, 5);
 
         if (this.get_flag(bufData, 0x8c)) countSpent += 20; // Pawno's Jiggy
         if (this.get_flag(bufData, 0x8d)) countSpent += 5; // Pawno's Cheato Page
@@ -438,9 +479,9 @@ export class BtOnline_Handlers {
         bufSpent2[0] &= 0x80; // only keeps binary 1000 0000
         bufTotal[0] &= 0x80; // only keeps binary 1000 0000
 
-        let countSpent1 = this.modloader.utils.utilBitCountBuffer(bufSpent1, 0, 2);
-        let countSpent2 = this.modloader.utils.utilBitCountBuffer(bufSpent2, 0, 2);
-        let countTotal = this.modloader.utils.utilBitCountBuffer(bufTotal, 0, 3);
+        let countSpent1 = this.utilBitCountBuffer(bufSpent1, 0, 2);
+        let countSpent2 = this.utilBitCountBuffer(bufSpent2, 0, 2);
+        let countTotal = this.utilBitCountBuffer(bufTotal, 0, 3);
         this.core.save.inventory.glowbos = countTotal - countSpent1 - countSpent2;
     }
 
@@ -448,7 +489,7 @@ export class BtOnline_Handlers {
         let bufTotal = new Buffer(bufData.slice(0x3f, 0x42));
         bufTotal[3] &= 0x07; // only keeps binary 0000 0111
         let countSpent = (this.parent.cDB.file[this.parent.cDB.team].healthUpgrade - 1) * 2 + 1;
-        let countTotal = this.modloader.utils.utilBitCountBuffer(bufTotal, 0, 4);
+        let countTotal = this.utilBitCountBuffer(bufTotal, 0, 4);
         this.core.save.inventory.honeycombs = countTotal - countSpent;
     }
 
@@ -472,7 +513,7 @@ export class BtOnline_Handlers {
 
     handle_ticket_count(bufData: Buffer) {
         let countSpent = this.get_flag(bufData, 0x22) ? 4 : 0;
-        let countTotal = this.modloader.utils.utilBitCount8(bufData[0x9c] & 0xf0); // only keeps binary 1111 0000
+        let countTotal = this.utilBitCount8(bufData[0x9c] & 0xf0); // only keeps binary 1111 0000
         this.core.save.inventory.tickets = countTotal - countSpent;
     }
 

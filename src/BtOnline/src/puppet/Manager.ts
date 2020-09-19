@@ -188,6 +188,7 @@ export class PuppetManager {
     }
 
     sendPuppet() {
+        if (this.emu.rdramRead8(global.ModLoader[API.AddressType.CMD_BUFFER]) !== 0) return;
         let pData = new Net.SyncPuppet(this.mapi.clientLobby, this.me.data);
         this.mapi.clientSide.sendPacket(pData);
     }

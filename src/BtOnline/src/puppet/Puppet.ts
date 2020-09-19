@@ -40,7 +40,10 @@ export class Puppet extends API.BaseObj {
 
     handleInstance(data: PData.Data) {
         if (!this.isSpawned || !this.canHandle) return;
-        if (this.data.broken) return;
+        if (this.data.broken) {
+            this.despawn();
+            return;
+        }
 
         Object.keys(data).forEach((key: string) => {
             (this.data as any)[key] = (data as any)[key];
@@ -71,7 +74,7 @@ export class Puppet extends API.BaseObj {
 
                 this.isSpawned = true;
                 this.canHandle = true;
-                //this.log('Puppet spawned! ' + ptr.toString(16).toUpperCase());
+                this.log('Puppet spawned! ' + ptr.toString(16).toUpperCase());
             }
         );
     }
