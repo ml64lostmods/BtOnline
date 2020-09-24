@@ -87,7 +87,7 @@ export class Puppet extends API.BaseObj {
         if (!this.isSpawned) return;
 
         this.commandBuffer.runCommand(
-            API.CMD.DESPAWN,
+            API.CMD.DESPAWN_FADE,
             this.index,
             (ptr: number) => {
                 if (ptr !== 0x000000) {

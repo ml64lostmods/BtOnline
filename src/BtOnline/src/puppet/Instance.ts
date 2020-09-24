@@ -113,11 +113,9 @@ export class Data extends API.BaseObj implements Data {
         let id: number = val.readUInt32BE(4);
         let um: number = val.readUInt16BE(8);
 
-        //this.emulator.memoryDebugLogger(true);
         this.emulator.rdramWrite32(animArr + 0x00, frame);
         this.emulator.rdramWrite32(animArr + 0x2c, id);
         this.emulator.rdramWrite16(animArr + 0x34, um);
-        //this.emulator.memoryDebugLogger(false);
     }
 
     get pos(): Buffer {
@@ -126,6 +124,11 @@ export class Data extends API.BaseObj implements Data {
     set pos(val: Buffer) {
         if (!this.safe) return;
         this.emulator.rdramWriteBuffer(this.tptr + 0x4, val);
+        
+        let cmdSlots = this.ptr_cmd - 4;
+        let cmd = this.emulator.rdramRead32(cmdSlots);
+        cmd &= 0xFFFEFFFF;
+        this.emulator.rdramWrite32(cmdSlots, cmd);
     }
 
     get rot(): Buffer {
