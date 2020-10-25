@@ -102,7 +102,7 @@ export class BtOnline_Client {
 
         // Detect Changes
         if (this.parent.cDB.file[packet.team].curJiggyChallenge <= packet.value) return;
-        this.parent.cDB.file[packet.team].curJiggyChallenge |= packet.value;
+        this.parent.cDB.file[packet.team].curJiggyChallenge = packet.value;
 
         this.log('Updated Team[' + API.ProfileType[packet.team] + ']: {Jiggy Wiggy Challenge}');
     }
@@ -143,7 +143,6 @@ export class BtOnline_Client {
 
     @NetworkHandler('SyncPuppet')
     onClient_SyncPuppet(packet: Net.SyncPuppet) {
-        if (packet.lobby !== 'nfu_ea') return;
         this.parent.pMgr.handlePuppet(packet);
     }
 }

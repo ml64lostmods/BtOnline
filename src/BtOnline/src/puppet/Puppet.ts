@@ -29,7 +29,7 @@ export class Puppet extends API.BaseObj {
         index: number
     ) {
         super(emu);
-        this.data = new PData.Data(emu, ptr_cmd, ptr_vis, core, player);
+        this.data = new PData.Data(emu, ptr_cmd, ptr_vis, core, player, index);
         this.commandBuffer = commandBuffer;
         this.nplayer = nplayer;
         this.id = nplayer.uuid;
@@ -64,7 +64,7 @@ export class Puppet extends API.BaseObj {
         }
 
         this.commandBuffer.runCommand(
-            API.CMD.SPAWN,
+            API.CMD.SPAWN_NO_FADE,
             this.index,
             (ptr: number) => {
                 if (ptr === 0x000000) {
@@ -74,6 +74,12 @@ export class Puppet extends API.BaseObj {
 
                 this.isSpawned = true;
                 this.canHandle = true;
+
+                let name = this.nplayer.nickname.substr(0, 0x1b);
+                let offset = 0xf01420 + (this.index * 0x20);
+                this.emulator.rdramWriteBuffer(offset, Buffer.from(name, 'utf8'))
+                this.emulator.rdramWrite32(offset + 0x1c, 0xF0800000);
+
                 this.log('Puppet spawned! ' + ptr.toString(16).toUpperCase());
             }
         );
@@ -87,7 +93,7 @@ export class Puppet extends API.BaseObj {
         if (!this.isSpawned) return;
 
         this.commandBuffer.runCommand(
-            API.CMD.DESPAWN_FADE,
+            API.CMD.DESPAWN,
             this.index,
             (ptr: number) => {
                 if (ptr !== 0x000000) {

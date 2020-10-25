@@ -112,7 +112,7 @@ export class BtOnline_Server {
         if (sDB === null) return;
 
         if (sDB.file[packet.team].curJiggyChallenge <= packet.value) return;
-        sDB.file[packet.team].curJiggyChallenge |= packet.value;
+        sDB.file[packet.team].curJiggyChallenge = packet.value;
 
         let pData = new Net.SyncNumbered(
             packet.lobby,

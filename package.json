@@ -1,12 +1,14 @@
 {
   "name": "BtOnline",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "description": "This is the official repository.",
   "main": "BtOnline.js",
   "author": "PMONickPop123, SpiceyWolf, Wedarobi",
   "credits": "Mittenz, TheLensta",
   "license": "GPL3",
-  "dependencies": {},
+  "dependencies": {
+    "@types/node": "^14.14.2"
+  },
   "devDependencies": {},
   "repository": {
     "type": "git",

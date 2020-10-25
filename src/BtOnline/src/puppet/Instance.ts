@@ -12,13 +12,14 @@ export class Data extends API.BaseObj implements Data {
     ptr_vis: number;
     animPtr: number;
     busyPtr: number;
+    index: number;
     broken: boolean = false;
 
     tptr: number = 0;
     safe: boolean = false;
 
     constructor(emu: IMemory, ptr_cmd: number, ptr_vis: number,
-                core: API.IBTCore, player: API.IPlayer) {
+                core: API.IBTCore, player: API.IPlayer, index: number) {
         super(emu);
         this.ptr_cmd = ptr_cmd;
         this.ptr_vis = ptr_vis;
@@ -26,13 +27,14 @@ export class Data extends API.BaseObj implements Data {
         this.busyPtr = global.ModLoader[API.AddressType.CMD_BUFFER];
         this.core = core;
         this.player = player;
+        this.index = index;
         this.copyFields.push('start');
         this.copyFields.push('anim');
         this.copyFields.push('pos');
         this.copyFields.push('rot');
         this.copyFields.push('model');
         this.copyFields.push('visible');
-        this.copyFields.push('y_flip');
+        this.copyFields.push('arbdata');
         this.copyFields.push('end');
 
         this.myVisiblePtr = global.ModLoader[API.AddressType.PUPPET_INFO] + 0x04;
@@ -53,6 +55,7 @@ export class Data extends API.BaseObj implements Data {
 
         if (this.emulator.rdramRead16(ptr + 0x6e) !== 0x9F6A) {
             this.broken = true;
+            console.info("Puppet shuffled, respawning...");
             return ret;
         }
 
@@ -132,7 +135,9 @@ export class Data extends API.BaseObj implements Data {
     }
 
     get rot(): Buffer {
-        return this.player.rotation;
+        let rot = this.player.rotation;
+        rot.writeFloatBE(this.player.rot_y_angle(), 4);
+        return rot;
     }
     set rot(val: Buffer) {   
         if (!this.safe) return;     
@@ -159,20 +164,44 @@ export class Data extends API.BaseObj implements Data {
         this.emulator.rdramWriteBuffer(this.ptr_vis, val);
     }
 
-    get y_flip(): boolean {
-        return this.player.flip_facing;
+    get arbdata(): Buffer {
+        // Ptrs
+        let addr  = 0xF01800;
+        let clear = addr - 4;
+
+        // Data
+        let len = this.emulator.rdramRead16(addr) + 4; // +4 for subheader
+        let buf = this.emulator.rdramReadBuffer(addr, len);
+
+        // Clear buffer
+        this.emulator.rdramWrite8(clear, 1);
+
+        return buf;
     }
-    set y_flip(val: boolean) {
-        if (!this.safe) return;
-        if (!val) return;
-        
-        let ptr: number = this.safetyCheck();
-        if (ptr === 0x000000) return;
-        
-        let y = this.emulator.rdramReadF32(ptr + 0x48);
-        y = (y + 180.0) % 360.0
-        this.bufFloat.writeFloatBE(y, 0);
-        this.emulator.rdramWriteBuffer(ptr + 0x48, this.bufFloat);
+
+    set arbdata(buf: Buffer) {
+        if (!this.safe)
+            return;
+
+        // Ptrs
+        let addr    = 0xF04800;
+        let lenaddr = addr - 4;
+
+        // Get curr arbdata buffer length
+        let len = this.emulator.rdramRead32(lenaddr);
+        addr += len;
+        if (addr >= 0xFFFFFF)
+            return;
+
+        // Update current arbdata buffer length
+        this.emulator.rdramWrite32(lenaddr, len + buf.byteLength + 4); // +4 for header
+
+        // Data
+        this.emulator.rdramWriteBuffer(addr + 4, buf); // +4 for header
+        this.emulator.rdramWrite8(addr + 0, this.index);
+
+        // Sig (read trigger)
+        this.emulator.rdramWrite16(addr + 2, 0x15E7);
     }
 
     toJSON() {
