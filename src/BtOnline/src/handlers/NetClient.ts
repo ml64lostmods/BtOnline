@@ -101,7 +101,7 @@ export class BtOnline_Client {
         this.log('Received: {Jiggy Wiggy Challenge}');
 
         // Detect Changes
-        if (this.parent.cDB.file[packet.team].curJiggyChallenge <= packet.value) return;
+        if (this.parent.cDB.file[packet.team].curJiggyChallenge >= packet.value) return;
         this.parent.cDB.file[packet.team].curJiggyChallenge = packet.value;
 
         this.log('Updated Team[' + API.ProfileType[packet.team] + ']: {Jiggy Wiggy Challenge}');
