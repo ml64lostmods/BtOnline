@@ -16,7 +16,8 @@
       "BanjoTooie/*": [
         "libs/BanjoTooie/*"
       ]
-    }
+    },
+    "noImplicitAny": false
   },
   "include": [
     "src/**/*.ts",
