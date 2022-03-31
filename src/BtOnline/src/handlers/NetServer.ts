@@ -17,7 +17,7 @@ export class BtOnline_Server {
     constructor(parent: Main.BtOnline) { this.parent = parent; }
 
     init() { }
-    
+
     // #################################################
     // ##  Utility Functions
     // #################################################
