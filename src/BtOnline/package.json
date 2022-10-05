@@ -1,7 +1,7 @@
 {
   "name": "BtOnline",
-  "version": "2.3.1",
-  "description": "",
+  "version": "2.3.3",
+  "description": "An online multiplayer mod for Banjo Tooie",
   "main": "BtOnline.js",
   "author": "PMONickpop123, SpiceyWolf, Wedarobi",
   "credits": "Mittenz, TheLensta",
@@ -10,5 +10,15 @@
   "updateUrl": "https://raw.githubusercontent.com/Modloader-Lost-Mods/BtOnline/master/update.json",
   "modloader64_deps": {
     "BanjoTooie": "https://github.com/Modloader-Lost-Mods/Core-BanjoTooie"
-  }
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Modloader-Lost-Mods/BtOnline.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Modloader-Lost-Mods/BtOnline/issues"
+  },
+  "homepage": "https://github.com/Modloader-Lost-Mods/BtOnline#readme"
 }
